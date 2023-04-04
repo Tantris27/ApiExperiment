@@ -9,30 +9,30 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      robots: [],
+      pokemon: [],
       searchfield: ""
     }
   }
   onSearchChange = (event) => {
     this.setState({ searchfield: event.target.value })
   }
-  componentDidMount() {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then(response => response.json())
-      .then(users => this.setState({ robots: users }))
+  async componentDidMount() {
+    const data = await fetch("https://pokeapi.co/api/v2/pokemon-species/?limit=60")
+    const entries = await data.json()
+    return this.setState({ pokemon: entries.results })
   }
   render() {
-    const { robots, searchfield } = this.state
-    const filteredRobots = robots.filter(robot => {
-      return robot.name.toLowerCase().includes(searchfield.toLowerCase())
+    const { pokemon, searchfield } = this.state
+    const filteredPokemon = pokemon.filter(singlePokemon => {
+      return singlePokemon.name.toLowerCase().includes(searchfield.toLowerCase())
     })
     return (
       <div className='tc' >
-        <h1 className='f1'>RobotFriend</h1>
+        <h1 className='f1'>Pokemons</h1>
         <SearchBox searchChange={this.onSearchChange} />
         <Scroll>
           <ErrorBoundary>
-            <CardList robots={filteredRobots} />
+            <CardList pokemon={filteredPokemon} />
           </ErrorBoundary>
         </Scroll>
       </div>
